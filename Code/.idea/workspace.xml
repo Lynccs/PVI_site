@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="34931c3e-6ccb-41b4-b6a4-e73c7e94678d" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="CSS File" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2ta3lg75dZvcYR4dceAyljzgx7V" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;JavaScript Debug.index.html.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/vikto/OneDrive/Робочий стіл/Навчання/2 курс/4sem/КГ/Лаба2/Lab2&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-76f8388c3a79-JavaScript-WS-243.24978.60" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="34931c3e-6ccb-41b4-b6a4-e73c7e94678d" name="Changes" comment="" />
+      <created>1740576513023</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1740576513023</updated>
+      <workItem from="1740576516692" duration="18594000" />
+      <workItem from="1740685432469" duration="10568000" />
+      <workItem from="1740696238939" duration="56000" />
+      <workItem from="1740738357399" duration="5072000" />
+      <workItem from="1740774479004" duration="11112000" />
+      <workItem from="1740846234931" duration="1624000" />
+      <workItem from="1740867675401" duration="1294000" />
+      <workItem from="1740918266261" duration="624000" />
+      <workItem from="1740942222397" duration="444000" />
+      <workItem from="1741007717294" duration="749000" />
+      <workItem from="1741204009004" duration="168000" />
+      <workItem from="1741545537914" duration="26065000" />
+      <workItem from="1741784612977" duration="113000" />
+      <workItem from="1741798993055" duration="11000" />
+      <workItem from="1741892532660" duration="11404000" />
+      <workItem from="1741985757055" duration="9000" />
+      <workItem from="1742042457950" duration="50027000" />
+      <workItem from="1742422411254" duration="138000" />
+      <workItem from="1742587541419" duration="11146000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
