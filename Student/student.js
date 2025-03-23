@@ -88,13 +88,21 @@ document.addEventListener("DOMContentLoaded", function () {
     let editingRow = null;
 
     //відображаємо модальне вікно при натисканні кнопки
-    addButton.addEventListener("click", function (event) {
+    addButton.addEventListener("click", function () {
         modalWindow.style.display = "block";
         overlay.style.display = "block";
         createButton.innerText = "Create"; // Встановлюємо текст кнопки
         modalForm.reset();
         isEditing = false;
     });
+
+    function closeModal() {
+        modalWindow.style.display = "none";
+        overlay.style.display = "none";
+        document.querySelector(".modalTitle").innerHTML = "Add student";
+        modalForm.reset();
+        isEditing = false;
+    }
 
     createButton.addEventListener("click", function () {
         // Зчитуємо значення з форми
@@ -117,16 +125,18 @@ document.addEventListener("DOMContentLoaded", function () {
             cells[3].innerText = gender;
             cells[4].innerText = formattedBirthday;
 
+            updateButtonsState(); //відображення кнопок відповідно до checkbox
+            updateUserStatus();
+
             // Скидаємо стан після редагування
             isEditing = false;
             editingRow = null;
             createButton.innerText = "Create";
 
             // Закриваємо модальне вікно
-            modalWindow.style.display = "none";
-            overlay.style.display = "none";
             document.querySelector(".modalTitle").innerHTML = "Add student";
-            modalForm.reset();
+            closeModal();
+
         } else {
             // Створюємо новий рядок для таблиці
             const newRow = document.createElement("tr");
@@ -147,20 +157,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             tableBody.appendChild(newRow);
 
-            // Закриваємо модальне вікно
-            modalWindow.style.display = "none";
-            overlay.style.display = "none";
-            modalForm.reset();
+            updateButtonsState(); //відображення кнопок відповідно до checkbox
+            updateUserStatus();
+
+           closeModal()
         }
     });
 
-    function closeModal() {
-        modalWindow.style.display = "none";
-        overlay.style.display = "none";
-        document.querySelector(".modalTitle").innerHTML = "Add student";
-        modalForm.reset();
-        isEditing = false;
-    }
 
     cancelButton.addEventListener("click", closeModal);
     closeButton.addEventListener("click", closeModal);
@@ -171,13 +174,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         //------редагування
         // Перевірка, чи натиснута кнопка редагування
-        const targetBtn = event.target.closest(".editBtn");
+        const editBtn = event.target.closest(".editBtn");
 
-        if (targetBtn) {
+        if (editBtn) {
             console.log("Натиснуто кнопку редагування");
 
             isEditing = true;
-            editingRow = targetBtn.closest("tr"); // Зберігаємо рядок для редагування
+            editingRow = editBtn.closest("tr"); // Зберігаємо рядок для редагування
 
             const cells = editingRow.querySelectorAll("td");
             const group = cells[1].innerText;
@@ -203,14 +206,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
         //------видалення
-        const delButton = event.target.closest(".deleteBtn");
-        if (delButton) {
+        const deleteBtn = event.target.closest(".deleteBtn");
+        if (deleteBtn) {
+            const checkedCheckbox = tableBody.querySelectorAll("input[type='checkbox']:checked");
+            let nameSurname = [];
+            let rowsToDelete = [];
 
-            const row = delButton.closest("tr");
-            const nameSurname = row.querySelector("td:nth-child(3)").innerText;
+            if (checkedCheckbox.length === 0) {
+                const row = deleteBtn.closest("tr");
+                nameSurname.push(row.querySelector("td:nth-child(3)").innerText);
+                rowsToDelete.push(row);
+            } else {
+                tableBody.querySelectorAll("tr").forEach((row) => {
+                    const checkbox = row.querySelector("input[type='checkbox']");
+                    if (checkbox.checked) {
+                        nameSurname.push(row.querySelector("td:nth-child(3)").innerText);
+                        rowsToDelete.push(row);
+                    }
+                })
+            }
 
-            document.getElementById("deleteMessage").innerHTML = `Are you sure you want to delete ${nameSurname}?`
-
+            document.getElementById("deleteMessage").innerHTML =
+                `Are you sure you want to delete ${nameSurname.length === 1 ? nameSurname[0] : nameSurname.join(", ")}?`;
             document.getElementById("deleteWindow").style.display = "block";
             document.getElementById("overlay").style.display = "block";
 
@@ -219,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const closeDelete = document.querySelector(".closeDelete");
 
             function handleDelete() {
-                row.remove();
+                rowsToDelete.forEach(row => {row.remove();});
                 closeDeleteWindow();
             }
 
@@ -240,8 +257,136 @@ document.addEventListener("DOMContentLoaded", function () {
 
     });
 
+    function updateButtonChecked(button, isDisabled) {
+        if (isDisabled) {
+            button.setAttribute("disabled", "true");
+            button.classList.remove("active");
+        } else {
+            button.removeAttribute("disabled");
+            button.classList.add("active");
+        }
+    }
+
+
+    /*tableBody.addEventListener("change", function (event) {
+        console.log(event.target); // Логування
+        if (event.target && event.target.type === "checkbox") {
+            const checkedCheckbox = tableBody.querySelectorAll("input[type='checkbox']:checked");
+
+            tableBody.querySelectorAll("tr").forEach(row => {
+                const editBtn = row.querySelector(".editBtn");
+                const deleteBtn = row.querySelector(".deleteBtn");
+                const checkbox = row.querySelector("input[type='checkbox']");
+
+                if(checkbox && checkedCheckbox.length > 0){
+                    if (checkbox.checked) {
+                        if(checkedCheckbox.length === 1) {
+                            updateButtonChecked(editBtn, false);
+                            updateButtonChecked(deleteBtn, false);
+                        } else {
+                            updateButtonChecked(editBtn, true);
+                            updateButtonChecked(deleteBtn, false);
+                        }
+
+                    } else {
+                        updateButtonChecked(editBtn, true);
+                        updateButtonChecked(deleteBtn, true);
+                    }
+                } else {
+                    updateButtonChecked(editBtn, false);
+                    updateButtonChecked(deleteBtn, false);
+                }
+            })
+
+
+            /!*const row = event.target.closest("tr");
+            const editBtn = row.querySelector(".editBtn");
+            const deleteBtn = row.querySelector(".deleteBtn");
+
+            const checkedCheckbox = tableBody.querySelectorAll("input[type='checkbox']:checked").length;
+
+            if (checkedCheckbox > 1) {
+                updateButtonChecked(editBtn, true);
+                updateButtonChecked(deleteBtn, false);
+            } else {
+                if(event.target.checked) {
+                    updateButtonChecked(editBtn, false);
+                    updateButtonChecked(deleteBtn, false);
+                    setDisabledButton();
+                } else {
+                    updateButtonChecked(editBtn, true);
+                    updateButtonChecked(deleteBtn, true);
+                }
+            }*!/
+        }
+    });*/
+
+    const mainCheckbox = document.querySelector("thead input[type='checkbox']");
+
+    mainCheckbox.addEventListener("change", function () {
+        const isChecked = mainCheckbox.checked;
+
+        tableBody.querySelectorAll("input[type='checkbox']").forEach(checkbox => {
+            checkbox.checked = isChecked;
+        });
+
+        updateButtonsState();
+    });
+
+    function updateButtonsState() {
+        const checkedCheckbox = tableBody.querySelectorAll("input[type='checkbox']:checked");
+        const count = checkedCheckbox.length;
+
+        tableBody.querySelectorAll("tr").forEach(row => {
+            const editBtn = row.querySelector(".editBtn");
+            const deleteBtn = row.querySelector(".deleteBtn");
+            const checkbox = row.querySelector("input[type='checkbox']");
+
+            if (!checkbox) return;
+
+            if (count === 0 || (count === 1 && checkbox.checked)) {
+                updateButtonChecked(editBtn, false);
+                updateButtonChecked(deleteBtn, false);
+            } else if (count > 1 && checkbox.checked) {
+                updateButtonChecked(editBtn, true);
+                updateButtonChecked(deleteBtn, false);
+            } else {
+                updateButtonChecked(editBtn, true);
+                updateButtonChecked(deleteBtn, true);
+            }
+        });
+    }
+
+
+// Додаємо обробник події для окремих чекбоксів
+    tableBody.addEventListener("change", function (event) {
+        if (event.target && event.target.type === "checkbox") {
+            updateButtonsState();
+        }
+    });
+
 });
 
+function updateUserStatus() {
+    const profileName = document.getElementById("profileName").textContent.trim();
+    const tableBody = document.getElementById("tableBody");
+
+    tableBody.querySelectorAll("tr").forEach(row => {
+        const nameCell = row.querySelector("td:nth-child(3)");
+        const statusCell = row.querySelector(".status");
+
+        if(nameCell && statusCell) {
+            statusCell.classList.remove("online", "offline");
+            if(nameCell.textContent.trim() === profileName) {
+                statusCell.classList.add("online")
+            } else {
+                statusCell.classList.add("offline");
+            }
+        }
+    })
+}
+
+document.addEventListener("DOMContentLoaded", updateUserStatus);
 
 
 
