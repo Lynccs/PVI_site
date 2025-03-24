@@ -176,6 +176,7 @@ header{
     background-color: #3F5A80;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     white-space: nowrap; /* Забороняє перенос */
+    z-index: 999;
 }
 .notificationMessage::after {
     content: "";
