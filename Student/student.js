@@ -35,15 +35,16 @@ document.addEventListener("DOMContentLoaded", function () {
         const newRow = document.createElement("tr");
 
         newRow.innerHTML = `
-                <td><input type="checkbox"></td>
+                <td><label aria-label="Select row">
+                  <input type="checkbox"></label></td>
                 <td>${group}</td>
                 <td>${firstName} ${lastName}</td>
                 <td>${gender}</td>
                 <td>${formattedBirthday}</td>
                 <td><span class="status offline"></span></td>
                 <td>
-                    <button class="actionBtn editBtn"><i class="bi bi-pencil"></i></button>
-                    <button class="actionBtn deleteBtn"><i class="bi bi-trash"></i></button>
+                    <button class="actionBtn editBtn" aria-label="Edit button"><i class="bi bi-pencil"></i></button>
+                    <button class="actionBtn deleteBtn" aria-label="Delete button"><i class="bi bi-trash"></i></button>
                 </td>
                 <td class="hiddenColumn">1</td>
             `;

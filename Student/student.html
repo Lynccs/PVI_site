@@ -20,10 +20,12 @@
   <div class="headerProfile">
 
       <div class="notificationWindow">
-          <i class="bi bi-bell" title="Notification">
-              <span class="notificationDot"></span>
-              <span class="notificationMessage">New message</span>
-          </i>
+          <div class="notificationIconContainer">
+              <i class="bi bi-bell" title="Notification">
+                  <span class="notificationDot"></span>
+                  <span class="notificationMessage">New message</span>
+              </i>
+          </div>
           <div class="notificationOptions">
             <ul>
                 <li><i class="bi bi-person-circle"></i>Saved</li>
@@ -42,15 +44,15 @@
               <div>Log out</div>
           </div>
       </div>
-
-
       <div id="profileName">Viktor Hvozdyk</div>
+
+
   </div>
 </header>
 
 <div class="mainContainer">
 
-    <button class="menuButton">
+    <button class="menuButton" aria-label="Open menu">
         <i class="bi bi-list"></i>
     </button>
 
@@ -72,7 +74,9 @@
      <table>
       <thead>
        <tr>
-         <th><input type="checkbox"></th>
+         <th aria-label="Select"><label aria-label="Select all row">
+             <input type="checkbox">
+         </label></th>
          <th>Group</th>
          <th>Name</th>
          <th>Gender</th>

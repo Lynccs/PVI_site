@@ -11,7 +11,7 @@ html, body {
 header{
     width:100%;
     min-height: 5vh;
-    background-color: #a5a5a5;
+    background-color: #757575;/*#a5a5a5;*/
     color: #ffffff;
     display: flex;
     align-items: center;
@@ -36,7 +36,7 @@ header{
 
 #logo img {
     width: 35px;
-    height: auto;
+    height: 35px;
     padding-top: 2px;
 }
 
@@ -63,11 +63,11 @@ header{
 .profileOptions {
     display: none;
     position: absolute;
-    top:125%;
+    top:135%;
     left: -10px;
     font-weight: bold;
     border-radius: 7px;
-    background-color: #b5b5b5; /* Світлий фон */
+    background-color: #757575;/*#b5b5b5; !* Світлий фон *!*/
     padding: 10px;
     border: 2px solid #8f8f8f; /* Чітка рамка */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -81,7 +81,7 @@ header{
     left: 10px; /* Відстань від правого краю меню */
     border-left: 15px solid transparent;  /* Ліва частина стрілки */
     border-right: 15px solid transparent; /* Права частина стрілки */
-    border-bottom: 10px solid #b5b5b5; /* Стрілка, що спрямована вниз */
+    border-bottom: 10px solid #757575; /* Стрілка, що спрямована вниз */
 }
 
 .profileOptions div {
@@ -99,12 +99,25 @@ header{
     margin-right:auto;
 }
 /*////////////////*/
+.notificationWindow {
+    position: relative;
+}
+.notificationIconContainer {
+    display: inline-block;
+    position: relative;
+}
+
 .notificationOptions {
+    /*min-width: 180px;
+    width: max-content;*/
+    /*width: 100%;*/
+    max-width: 400px;
+    min-width: 180px;
     display: none;
     position: absolute;
-    top: 125%;
-    right: 0;
-    width: 110%;
+    top: 150%;
+    left: 0;
+   /* width: 110%;*/
     border-radius: 7px;
     background-color: #F2EFE7;  /* Світлий фон */
     border: 2px solid #b8b8b8;  /* Легкий сірий контур */
@@ -132,7 +145,7 @@ header{
     border-radius: 5px;
     cursor: pointer;
     background-color: #d0d0d0;  /* Світлий фон для кожного елементу */
-    color: #5B77A1;
+    color: #465A7C;/*#5B77A1;*/
 }
 .notificationOptions li:hover {
     background-color: #5B77A1;
@@ -206,7 +219,11 @@ header{
         left: 9px;
         border-left: 10px solid transparent;
         border-right: 10px solid transparent;
-        border-bottom: 10px solid #b5b5b5;
+        border-bottom: 10px solid #757575;
+    }
+
+    .notificationOptions{
+        min-width: 150px;
     }
 }
 /*////////////////*/
@@ -257,7 +274,7 @@ aside {
     align-items: center; /* Вирівнює текст вертикально */
     padding-left: 2vw;
     text-decoration: none;
-    color: #F2EFE7;
+    color: #FFFFFF;/*#F2EFE7;*/
     background-color: #5B77A1;
     margin-right: auto;
     transition: all 0.3s ease-in-out;

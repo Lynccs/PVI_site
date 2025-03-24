@@ -44,7 +44,7 @@ input[type="checkbox"] {
 
 th {
     background-color: #5B77A1;
-    color: #F2EFE7;
+    color: #FFFFFF;/*#F2EFE7;*/
     font-size: 1rem;
     padding: 12px;
     text-align: center;
@@ -142,7 +142,7 @@ td {
 
 .pagination button {
     background: none;
-    color: #5B77A1;
+    color: #546D96;/*#5B77A1;*/
     border: 1px solid #5B77A1;
     padding: 7px 14px;
     font-size: 16px;
@@ -170,7 +170,7 @@ td {
 .pageNumbers button {
     background: none;
     border: none;
-    color: #5B77A1;
+    color: #546D96;/*#5B77A1;*/
     font-size: 20px;
     width: 1.9rem;
     height: 1.9rem;
@@ -290,11 +290,12 @@ td {
 }
 
 @media screen and (max-width: 950px) {
-    .modalWindow {
+    .modalWindow, .modalWindowDelete {
         width: 70%;  /* Зменшуємо ширину для планшетів */
         height: auto;
         top: 45%;  /* Розташовуємо трохи нижче */
     }
+
 
     .modalContent {
         padding: 15px;
