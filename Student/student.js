@@ -30,24 +30,67 @@ document.addEventListener("DOMContentLoaded", function () {
         isEditing = false;
     }
 
-    function addRowToTable(group, firstName, lastName, gender, formattedBirthday) {
+    function addRowToTable(group, firstName, lastName, gender, formattedBirthday, userID) {
         // Створюємо новий рядок для таблиці
         const newRow = document.createElement("tr");
 
-        newRow.innerHTML = `
-                <td><label aria-label="Select row">
-                  <input type="checkbox"></label></td>
-                <td>${group}</td>
-                <td>${firstName} ${lastName}</td>
-                <td>${gender}</td>
-                <td>${formattedBirthday}</td>
-                <td><span class="status offline"></span></td>
-                <td>
-                    <button class="actionBtn editBtn" aria-label="Edit button"><i class="bi bi-pencil"></i></button>
-                    <button class="actionBtn deleteBtn" aria-label="Delete button"><i class="bi bi-trash"></i></button>
-                </td>
-                <td class="hiddenColumn">1</td>
-            `;
+        // створюємо комірку для checkbox
+        const td1 = document.createElement("td");
+        const label = document.createElement("label");
+        label.setAttribute("aria-label", "Select row");
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        label.appendChild(checkbox);
+        td1.appendChild(label);
+
+        // творюємо інші комірки з даними
+        const td2 = document.createElement("td");
+        td2.textContent = group;
+
+        const td3 = document.createElement("td");
+        td3.textContent = `${firstName} ${lastName}`;
+
+        const td4 = document.createElement("td");
+        td4.textContent = gender;
+
+        const td5 = document.createElement("td");
+        td5.textContent = formattedBirthday;
+
+        // статус
+        const td6 = document.createElement("td");
+        const statusSpan = document.createElement("span");
+        statusSpan.classList.add("status", "offline");
+        td6.appendChild(statusSpan);
+
+        // кнопки
+        const td7 = document.createElement("td");
+        const editBtn = document.createElement("button");
+        editBtn.classList.add("actionBtn", "editBtn");
+        editBtn.setAttribute("aria-label", "Edit button");
+        editBtn.innerHTML = '<i class="bi bi-pencil"></i>';
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.classList.add("actionBtn", "deleteBtn");
+        deleteBtn.setAttribute("aria-label", "Delete button");
+        deleteBtn.innerHTML = '<i class="bi bi-trash"></i>';
+        td7.appendChild(editBtn);
+        td7.appendChild(deleteBtn);
+
+        // прихований ID
+        const td8 = document.createElement("td");
+        td8.classList.add("hiddenColumn");
+        td8.textContent = userID;
+        newRow.dataset.userId = userID; // додаємо ID у dataset, "зашиваємо в html в рядок"
+        console.log(userID);
+
+        newRow.appendChild(td1);
+        newRow.appendChild(td2);
+        newRow.appendChild(td3);
+        newRow.appendChild(td4);
+        newRow.appendChild(td5);
+        newRow.appendChild(td6);
+        newRow.appendChild(td7);
+        newRow.appendChild(td8);
 
         tableBody.appendChild(newRow);
         updateButtonsState(); //відображення кнопок відповідно до checkbox
@@ -56,10 +99,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function editRow(editingRow, group, firstName, lastName, gender, formattedBirthday) {
         const cells = editingRow.querySelectorAll("td");
-        cells[1].innerText = group;
-        cells[2].innerText = `${firstName} ${lastName}`;
-        cells[3].innerText = gender;
-        cells[4].innerText = formattedBirthday;
+
+        // Зчитуємо існуючий userID з dataset
+        const userID = editingRow.dataset.userId;
+
+        cells[1].textContent = group;
+        cells[2].textContent = `${firstName} ${lastName}`;
+        cells[3].textContent = gender;
+        cells[4].textContent = formattedBirthday;
+        cells[7].textContent = userID;
+
+        editingRow.dataset.userId = userID;
+        console.log(`editID: ${userID}`);
 
         updateButtonsState(); //відображення кнопок відповідно до checkbox
         updateUserStatus();
@@ -84,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!modalForm.checkValidity()) {
             return;
         }
-    /*createButton.addEventListener("click", function () {*/
+        /*createButton.addEventListener("click", function () {*/
 
         // Зчитуємо значення з форми
         const group = document.getElementById("dropdown").value;
@@ -92,6 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const lastName = document.getElementById("lastName").value;
         const gender = document.getElementById("gender").value;
         const birthday = document.getElementById("birthday").value;
+        const formUserID = document.getElementById("userID").value;
 
         const date = new Date(birthday); // Перетворюємо на об'єкт Date
         // Форматуємо дату
@@ -99,6 +151,11 @@ document.addEventListener("DOMContentLoaded", function () {
             '.' + (date.getMonth() + 1).toString().padStart(2, '0') + '.' + date.getFullYear();
 
         if (isEditing && editingRow) {
+            if (formUserID !== editingRow.dataset.userId) {
+                alert("Помилка: ID користувача не збігається. Спробуйте ще раз.");
+                return;
+            }
+
             editRow(editingRow, group, firstName, lastName, gender, formattedBirthday);
 
             // Скидаємо стан після редагування
@@ -111,7 +168,8 @@ document.addEventListener("DOMContentLoaded", function () {
             closeModal();
 
         } else {
-            addRowToTable(group, firstName, lastName, gender, formattedBirthday);
+            const userID = crypto.randomUUID();
+            addRowToTable(group, firstName, lastName, gender, formattedBirthday, userID);
 
            closeModal()
         }
@@ -134,7 +192,10 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("Натиснуто кнопку редагування");
 
             isEditing = true;
-            editingRow = editBtn.closest("tr"); // Зберігаємо рядок для редагування
+            const userID = editBtn.closest("tr").dataset.userId; // Отримуємо ID з атрибута dataset
+            editingRow = tableBody.querySelector(`tr[data-user-id="${userID}"]`); // Шукаємо рядок по ID
+
+            /*editingRow = editBtn.closest("tr"); */// Зберігаємо рядок для редагування
 
             const cells = editingRow.querySelectorAll("td");
             const group = cells[1].innerText;
@@ -152,6 +213,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("gender").value = gender;
             document.getElementById("birthday").value = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
             // Перетворили у формат YYYY-MM-DD
+            document.getElementById("userID").value = userID;
 
             modalWindow.style.display = "block";
             overlay.style.display = "block";
@@ -167,7 +229,9 @@ document.addEventListener("DOMContentLoaded", function () {
             let rowsToDelete = [];
 
             if (checkedCheckbox.length === 0) {
-                const row = deleteBtn.closest("tr");
+                const userID = deleteBtn.closest("tr").dataset.userId;
+                /*const row = deleteBtn.closest("tr");*/
+                const row = tableBody.querySelector(`tr[data-user-id="${userID}"]`);
                 nameSurname.push(row.querySelector("td:nth-child(3)").innerText);
                 rowsToDelete.push(row);
             } else {
