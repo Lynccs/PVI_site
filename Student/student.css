@@ -290,6 +290,11 @@ td {
     color: #F2EFE7;
 }
 
+input:focus:invalid {
+    border: 2px solid red;
+    background-color: #ffe6e6;
+}
+
 @media screen and (max-width: 950px) {
     .modalWindow, .modalWindowDelete {
         width: 70%;  /* Зменшуємо ширину для планшетів */

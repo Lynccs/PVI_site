@@ -128,14 +128,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     modalForm.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-        event.preventDefault();  // Запобігаємо стандартному відправленню форми
+        const firstNameV = document.getElementById("firstName");
+        const lastNameV = document.getElementById("lastName");
 
-        // Перевірка форми на валідність
-        if (!modalForm.checkValidity()) {
+        const namePattern = /^[A-Z][a-z]{1,19}$/;
+
+        if (!namePattern.test(firstNameV.value)) {
+            firstNameV.setCustomValidity("Ім'я має починатися з великої літери та містити від 2 до 20 літер.");
+        } else {
+            firstNameV.setCustomValidity(""); // Очищаємо помилку, якщо все добре
+        }
+
+        if (!namePattern.test(lastNameV.value)) {
+            lastNameV.setCustomValidity("Прізвище має починатися з великої літери та містити від 2 до 20 літер.");
+        } else {
+            lastNameV.setCustomValidity("");
+        }
+
+        if (!this.checkValidity()) {
+            this.reportValidity(); // Виводимо підказки користувачеві
             return;
         }
-        /*createButton.addEventListener("click", function () {*/
+
 
         // Зчитуємо значення з форми
         const group = document.getElementById("dropdown").value;

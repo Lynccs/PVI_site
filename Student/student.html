@@ -158,10 +158,16 @@
             </select>
 
             <label for="firstName">First name</label>
-            <input type="text" id="firstName" name="firstName" required title="Please enter your first name.">
+            <input type="text" id="firstName" name="firstName" required
+                   pattern="^[A-Z][a-z]{1,19}$"
+                   title="Ім'я повинно починатися з великої літери та містити від 2 до 20 літер.">
 
             <label for="lastName">Last name</label>
-            <input type="text" id="lastName" name="lastName" required>
+            <input type="text" id="lastName" name="lastName" required
+                   pattern="^[A-Z][a-z]{1,19}$"
+                   title="Прізвище повинно починатися з великої літери та містити від 2 до 20 літер.">
+
+
 
             <label for="gender">Gender</label>
             <select id="gender">
