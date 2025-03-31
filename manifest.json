@@ -1,0 +1,39 @@
+{
+  "name": "CMS App",
+  "short_name": "CMS",
+  "start_url": "/Student/student.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/Icon/icon128.png",
+      "type": "image/png",
+      "sizes": "128x128"
+    },
+    {
+      "src": "/Icon/icon192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/Icon/icon256.png",
+      "type": "image/png",
+      "sizes": "256x256"
+    },
+    {
+      "src": "/Icon/icon512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/Icon/screenshot1.png",
+      "type": "image/png",
+      "sizes": "1080x1920"
+    }
+  ]
+}

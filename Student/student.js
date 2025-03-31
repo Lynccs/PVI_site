@@ -1,7 +1,7 @@
 //---------------------------------------------//
 //модальне вікно додавання/редагування/видалення
 document.addEventListener("DOMContentLoaded", function () {
-    const createButton = document.querySelector(".modalButton[type='submit']");
+    const createButton = document.querySelector(".modalButton[type='submit']"); 
     const cancelButton = document.querySelector(".modalButton.cancel");
     const closeButton = document.querySelector(".close");
     const modalWindow = document.getElementById("modalWindow");
@@ -93,6 +93,19 @@ document.addEventListener("DOMContentLoaded", function () {
         newRow.appendChild(td8);
 
         tableBody.appendChild(newRow);
+
+        const studentDate = {
+            group: group,
+            firstName: firstName,
+            lastName: lastName,
+            gender: gender,
+            birthday: formattedBirthday,
+            userID: userID
+        }
+
+        const jsonString = JSON.stringify(studentDate);
+        console.log("Added student:", jsonString);
+
         updateButtonsState(); //відображення кнопок відповідно до checkbox
         updateUserStatus();
     }
@@ -112,6 +125,18 @@ document.addEventListener("DOMContentLoaded", function () {
         editingRow.dataset.userId = userID;
         console.log(`editID: ${userID}`);
 
+        const studentDate = {
+            group: group,
+            firstName: firstName,
+            lastName: lastName,
+            gender: gender,
+            birthday: formattedBirthday,
+            userID: userID
+        }
+
+        const jsonString = JSON.stringify(studentDate);
+        console.log("Edit student:", jsonString);
+
         updateButtonsState(); //відображення кнопок відповідно до checkbox
         updateUserStatus();
     }
@@ -127,30 +152,33 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
+    function validateNameField(e, namePattern) {
+        const field = e.target;
+    
+      if (!namePattern.test(field.value)) {
+            field.setCustomValidity(field.id === 'firstName' 
+               ? "Ім'я має починатися з великої літери та містити від 2 до 20 літер." 
+               : "Прізвище має починатися з великої літери та містити від 2 до 20 літер.");
+        } else {
+         field.setCustomValidity("");
+        }
+    
+      // кажемо формі перевірити валідність знову
+      field.reportValidity();
+    }
+    
     modalForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
         const firstNameV = document.getElementById("firstName");
         const lastNameV = document.getElementById("lastName");
 
-        const namePattern = /^[A-Z][a-z]{1,19}$/;
+        const firstnamePattern = /^[A-Z][a-z]{0,18}(-[A-Z][a-z]*)?$/;
+        const lastnamePattern = /^[A-Z][a-z]{1,19}$/;
 
-        if (!namePattern.test(firstNameV.value)) {
-            firstNameV.setCustomValidity("Ім'я має починатися з великої літери та містити від 2 до 20 літер.");
-        } else {
-            firstNameV.setCustomValidity(""); // Очищаємо помилку, якщо все добре
-        }
+        firstNameV.addEventListener('input', (e) => validateNameField(e, firstnamePattern));
+        lastNameV.addEventListener('input', (e) => validateNameField(e, lastnamePattern));
 
-        if (!namePattern.test(lastNameV.value)) {
-            lastNameV.setCustomValidity("Прізвище має починатися з великої літери та містити від 2 до 20 літер.");
-        } else {
-            lastNameV.setCustomValidity("");
-        }
-
-        if (!this.checkValidity()) {
-            this.reportValidity(); // Виводимо підказки користувачеві
-            return;
-        }
 
 
         // Зчитуємо значення з форми

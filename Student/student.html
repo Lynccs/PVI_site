@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="student.css">
     <link rel="stylesheet" href="common.css">
+    <link rel="manifest" href="../manifest.json">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
   <title>Students</title>
@@ -159,7 +160,7 @@
 
             <label for="firstName">First name</label>
             <input type="text" id="firstName" name="firstName" required
-                   pattern="^[A-Z][a-z]{1,19}$"
+                   pattern="^[A-Z][a-z]{0,18}(-[A-Z][a-z]*)?$"
                    title="Ім'я повинно починатися з великої літери та містити від 2 до 20 літер.">
 
             <label for="lastName">Last name</label>
@@ -204,6 +205,15 @@
 
 <script src="student.js"></script>
 <script src="common.js"></script>
+
+<script>
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+            .register("/Site/sw.js") /*для vs code просто /sw.js*/
+            .then(() => console.log("Service Worker registered"))
+            .catch((err) => console.error("Service Worker registration failed", err));
+    }
+</script>
 
 </body>
 </html>
