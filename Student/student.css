@@ -185,6 +185,7 @@ td {
 }
 
 .pageNumbers button.active {
+    color: #F2EFE7;
     font-weight: bold;
     border: 2px solid #F2EFE7;
     background-color: #3F5A80;

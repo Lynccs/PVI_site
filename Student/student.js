@@ -13,6 +13,10 @@ document.addEventListener("DOMContentLoaded", function () {
     let isEditing = false;
     let editingRow = null;
 
+    const allRows = [];
+    const rowsPerPage = 5;
+    let currentPage = 1;
+
     //відображаємо модальне вікно при натисканні кнопки
     addButton.addEventListener("click", function () {
         modalWindow.style.display = "block";
@@ -92,7 +96,9 @@ document.addEventListener("DOMContentLoaded", function () {
         newRow.appendChild(td7);
         newRow.appendChild(td8);
 
-        tableBody.appendChild(newRow);
+        //tableBody.appendChild(newRow);
+        allRows.push(newRow);
+        renderTablePage(currentPage);
 
         const studentDate = {
             group: group,
@@ -134,16 +140,30 @@ document.addEventListener("DOMContentLoaded", function () {
             userID: userID
         }
 
+        const index = allRows.findIndex(row => row.userId === userID);
+
+        if (index !== -1){
+            allRows[index] = editingRow;
+        }
+
         const jsonString = JSON.stringify(studentDate);
         console.log("Edit student:", jsonString);
 
-        updateButtonsState(); //відображення кнопок відповідно до checkbox
+        updateButtonsState();
         updateUserStatus();
     }
 
     function deleteRow(rowsToDelete) {
-        rowsToDelete.forEach(row => {row.remove();});
+        rowsToDelete.forEach(row => {
+            const userId = row.dataset.userId;
+            const index = allRows.findIndex(r => r.dataset.userId === userId);
+            if (index !== -1) {
+                allRows.splice(index, 1);
+            }
+        });
         updateButtonsState();
+        renderTablePage(currentPage);
+        renderPaginationButton();
     }
 
     function closeDeleteWindow() {
@@ -412,14 +432,66 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-
-// Додаємо обробник події для окремих чекбоксів
+    // Додаємо обробник події для окремих чекбоксів
     tableBody.addEventListener("change", function (event) {
         if (event.target && event.target.type === "checkbox") {
             updateButtonsState();
         }
     });
 
+    // відображення сторінок таблиці
+    function renderTablePage(page){
+        tableBody.innerHTML = "";
+
+        const startIndex = (page - 1) * rowsPerPage;
+        const endIndex = startIndex + rowsPerPage;
+
+        const rowsToDisplay = allRows.slice(startIndex, endIndex);
+        rowsToDisplay.forEach(row => tableBody.appendChild(row));
+
+        currentPage = page;
+
+        renderPaginationButton();
+        updateUserStatus();
+        updateButtonsState();
+    }
+
+    // відображення кнопок пагінації
+    function renderPaginationButton(){
+        const pageNumber = document.getElementById("pageNumbers");
+        pageNumber.innerText = "";
+
+        const totalPages = Math.ceil(allRows.length / rowsPerPage);
+        for(let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement("button");
+            pageButton.textContent = i;
+
+            if (i === currentPage) {
+                pageButton.classList.add("active");
+            }
+
+            pageButton.addEventListener("click", () => {
+                renderTablePage(i);
+            });
+
+            pageNumber.appendChild(pageButton);
+        }
+        document.getElementById("prevPage").disabled = currentPage === 1;
+        document.getElementById("nextPage").disabled = currentPage === totalPages;
+    }
+
+    document.getElementById("prevPage").addEventListener("click", () => {
+        if (currentPage > 1) {
+            renderTablePage(currentPage - 1);
+        }
+    });
+
+    document.getElementById("nextPage").addEventListener("click", () => {
+        const totalPages = Math.ceil(allRows.length / rowsPerPage);
+        if (currentPage < totalPages) {
+            renderTablePage(currentPage + 1);
+        }
+    });
 });
 
 function updateUserStatus() {
