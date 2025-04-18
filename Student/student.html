@@ -42,10 +42,14 @@
           </div>
           <div class="profileOptions">
               <div>Profile</div>
-              <div>Log out</div>
+              <div id="logOutButton">Log out</div>
           </div>
       </div>
-      <div id="profileName">Viktor Hvozdyk</div>
+
+      <div id="profileName"></div>
+      <div class="login">
+          <button id="loginButton">Log in</button>
+      </div>
 
 
   </div>
@@ -68,6 +72,30 @@
 </aside>
 
  <main>
+
+     <div id="loginWindow" class="modalWindowLogin">
+         <div class="modalContent">
+             <span class="closeLogin">&times;</span>
+             <h2>Log in</h2>
+
+             <form id ="loginForm">
+                 <label for="loginName">Username</label>
+                 <input type="text" name="loginName" id="loginName" required>
+                 <label for="loginSurname">Surname</label>
+                 <input type="text" name="loginSurname" id="loginSurname" required>
+                 <label for="loginBirthday">Birthday</label>
+                 <input type="date" name="loginBirthday" id="loginBirthday" required min="1900-01-01" max="2025-12-31">
+                 <hr>
+                 <div class="buttonContainerLogin">
+                     <button type="button" class="cancelLogIn">Cancel</button>
+                     <button type="submit" class="confirmLogIn">Log in</button>
+                 </div>
+             </form>
+         </div>
+     </div>
+
+
+
   <h1>Students</h1>
    <button id="addButton">+</button>
 

@@ -47,6 +47,13 @@ header{
     margin-right: 1.1rem;
     position: relative; /* для індикатора сповіщення*/
 }
+
+.bi-bell.disabled, .bi-person-circle.disabled {
+    opacity: 0.5; /* Робимо іконку напівпрозорою */
+    pointer-events: none; /* Блокуємо взаємодію з іконкою */
+    cursor: not-allowed; /* Міняємо курсор на не дозволений */
+}
+
 .bi-person-circle{
     font-size:1.6rem;
     margin-right: 0.5rem;
@@ -95,6 +102,24 @@ header{
     background-color: #a5a5a5;
 }
 
+#loginButton {
+    display: none;
+    font-size: 1.1rem;
+    background: none;
+    border: 1px #FFFFFF solid;
+    color: #ffffff;
+    border-radius: 7px;
+    padding: 3px 10px;
+    margin: 0 4px 0 9px;
+    font-weight: bold;
+}
+
+#loginButton:hover {
+    background-color: #FFFFFF;
+    color: #757575;
+    font-weight: bold;
+}
+
 .headerRight{
     margin-right:auto;
 }
@@ -116,7 +141,7 @@ header{
     display: none;
     position: absolute;
     top: 150%;
-    left: 0;
+    left: -30%;
    /* width: 110%;*/
     border-radius: 7px;
     background-color: #F2EFE7;  /* Світлий фон */

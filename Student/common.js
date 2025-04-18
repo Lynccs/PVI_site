@@ -1,7 +1,26 @@
-function toggleActiveClass(element, event, addClassName) {
-    const targetElement = document.querySelector(element);
+function isUserAuthorized() {
+    return fetch('../controllers/studentController.php?action=sessionCheck')
+        .then(res => res.json())  // Отримуємо JSON від сервера
+        .then(data => {
+            return data.success;  // Якщо сервер підтверджує авторизацію
+        })
+        .catch(error => {
+            console.log("Error:", error);
+            return false;  // Якщо сталася помилка, вважаємо, що користувач не авторизований
+        });
+}
 
-    if (!targetElement) return;
+
+function toggleActiveClass(element, event, addClassName) {
+        const targetElement = document.querySelector(element);
+
+        if (!targetElement) return;
+
+        if (!isUserAuthorized()) {
+            //event.preventDefault();  // Перериваємо подію, якщо користувач не авторизований
+            return;
+        }
+
     const isActive = targetElement.classList.contains(addClassName);
 
     // шукає елемент, який або сам є тим, що відповідає селектору (наприклад, класу)
@@ -31,6 +50,11 @@ const notificationDot = document.querySelector(".notificationDot");
 const notificationMessage = document.querySelector(".notificationMessage");
 
 function animationMessage() {
+    if (!isUserAuthorized()) {
+        //event.preventDefault();  // Перериваємо подію, якщо користувач не авторизований
+        return;
+    }
+
     notificationIcon.style.animation = "none"; // Скидаємо анімацію
 
     setTimeout(() => {
@@ -64,6 +88,20 @@ document.addEventListener("click", function (event) {
 
 //aside навігація сторінки
 document.addEventListener("DOMContentLoaded", function () {
+    const profileName = document.getElementById("profileName");
+
+    fetch('../controllers/studentController.php?action=sessionCheck')
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                profileName.textContent = data.loginName + " " + data.loginSurname;
+            }
+        })
+        .catch(error => {
+            console.log("Error:", error);
+            return false;  // Якщо сталася помилка, вважаємо, що користувач не авторизований
+        });
+
     const links = document.querySelectorAll(".navigationAside a");
 
     links.forEach(link => {
@@ -72,3 +110,19 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+document.getElementById("logOutButton").addEventListener("click", function () {
+    fetch('../controllers/studentController.php?action=logout')
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                window.location.href = "../Student/student.html";
+            } else {
+                alert("Error logout!");
+            }
+        })
+        .catch(error => {
+            console.log("Error: ",error);
+            alert("Error on the server");
+        });
+})

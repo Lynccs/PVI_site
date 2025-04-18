@@ -214,7 +214,7 @@ td {
     left: 50%;
     top: 45%;
     width: 30%;
-    height: 50%;
+    height: 45%;
     transform: translate(-50%, -50%);
     z-index: 1000;
 }
@@ -228,6 +228,18 @@ td {
     transform: translate(-50%, -50%);
     z-index: 1000;
 }
+
+.modalWindowLogin {
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 45%;
+    width: 30%;
+    height: 35%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
 .modalContent {
     background-color: #F2EFE7;
     border-radius: 12px;
@@ -238,7 +250,7 @@ td {
     width: 100%;
     height: 100%;
 }
-.modalContent .close, .closeDelete {
+.modalContent .close, .closeDelete, .closeLogin {
     position: absolute;  /* Хрестик позиціонується абсолютно відносно modalContent */
     top: 10px;           /* Відстань від верхнього краю */
     right: 20px;         /* Відстань від правого краю */
@@ -247,7 +259,7 @@ td {
     cursor: pointer;     /* Курсор у вигляді руки */
 }
 
-#modalForm {
+#modalForm, #loginForm {
     display: grid;
     /*background-color: red;*/
     grid-template-columns: 1fr 2fr; /*33% 67%*/
@@ -255,18 +267,20 @@ td {
     align-items: center;
 }
 
-#modalForm label {
+#modalForm label, #loginForm label {
     text-align: left;
 }
 
-#modalForm input, select {
+#modalForm input, #modalForm select,
+#loginForm input, #loginForm select {
     width: 100%;
     padding: 6px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
 
-.buttonContainer {
+
+.buttonContainer, .buttonContainerLogin {
     display: flex;
     justify-content: flex-end;  /* Вирівнює кнопки праворуч */
     gap: 10px;  /* між кнопками */
@@ -274,7 +288,8 @@ td {
 }
 
 .modalWindow button,
-.modalWindowDelete button {
+.modalWindowDelete button,
+.modalWindowLogin button  {
     background: none;
     color: #5B77A1;
     border: 2px solid #5B77A1;
@@ -286,7 +301,8 @@ td {
 }
 
 .modalWindow button:hover,
-.modalWindowDelete button:hover {
+.modalWindowDelete button:hover,
+.modalWindowLogin button:hover   {
     background-color: #5B77A1;
     color: #F2EFE7;
 }
@@ -297,8 +313,8 @@ input:focus:invalid {
 }
 
 @media screen and (max-width: 950px) {
-    .modalWindow, .modalWindowDelete {
-        width: 70%;  /* Зменшуємо ширину для планшетів */
+    .modalWindow, .modalWindowDelete, .modalWindowLogin {
+        width: 50%;  /* Зменшуємо ширину для планшетів */
         height: auto;
         top: 45%;  /* Розташовуємо трохи нижче */
     }
@@ -319,7 +335,7 @@ input:focus:invalid {
 }
 
 @media screen and (max-width: 480px) {
-    .modalWindow {
+    .modalWindow, .modalWindowLogin {
         width: 90%;
         height: auto;
     }
@@ -332,11 +348,11 @@ input:focus:invalid {
         font-size: 18px;
     }
 
-    #modalForm {
+    #modalForm, #loginForm {
         grid-template-columns: 1fr;  /* Створюємо одностовпцеву форму */
     }
 
-    .buttonContainer {
+    .buttonContainer, .buttonContainerLogin {
         flex-direction: column;  /* Розміщуємо кнопки вертикально */
         gap: 5px;  /* Між кнопками буде менше місця */
     }

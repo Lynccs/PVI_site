@@ -19,11 +19,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     //відображаємо модальне вікно при натисканні кнопки
     addButton.addEventListener("click", function () {
-        modalWindow.style.display = "block";
-        overlay.style.display = "block";
-        createButton.innerText = "Create"; // Встановлюємо текст кнопки
-        modalForm.reset();
-        isEditing = false;
+        requiredAuth(() => {
+            modalWindow.style.display = "block";
+            overlay.style.display = "block";
+            createButton.innerText = "Create"; // Встановлюємо текст кнопки
+            modalForm.reset();
+            isEditing = false;
+        });
     });
 
     function closeModal() {
@@ -492,7 +494,191 @@ document.addEventListener("DOMContentLoaded", function () {
             renderTablePage(currentPage + 1);
         }
     });
+
+    // кнопка авторизації Log in
+    function openLoginForm() {
+        overlay.style.display = "block";
+        document.getElementById("loginWindow").style.display = "block";
+    }
+    function closeLoginForm() {
+        console.log("closeLoginForm called");
+        console.log("overlay:", overlay);
+        overlay.style.display = "none";
+        document.getElementById("loginWindow").style.display = "none";
+        document.getElementById("loginName").value = '';
+        document.getElementById("loginSurname").value = '';
+        document.getElementById("loginBirthday").value = '';
+        console.log("closeLoginForm called after");
+        console.log("overlay:", overlay);
+    }
+
+    document.addEventListener("click", function (event) {
+        console.log("Click event on", event.target);
+    });
+
+    document.querySelector(".cancelLogIn").addEventListener("click", function(event) {
+        console.log("Cancel button clicked");
+        //event.stopPropagation();  // Зупиняємо поширення події
+        closeLoginForm();
+    });
+
+
+    document.querySelector(".closeLogin").addEventListener("click", function () {
+        closeLoginForm();
+    });
+
+    document.getElementById("loginButton").addEventListener("click", function (event) {
+        console.log("клік Log in");
+        //event.stopPropagation(); // не передаємо делегуванню
+        openLoginForm();
+    })
+
+    function checkAuthorization(event) {
+        /*event.preventDefault();
+        event.stopPropagation();*/
+        fetch('../controllers/studentController.php?action=sessionCheck')
+            .then(res => res.json())
+            .then(data => {
+                if(!data.success) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    openLoginForm();
+                }
+            })
+            .catch(error => {
+                console.log("Error: ",error);
+                alert("Error on the server");
+            });
+        /*let userToken = sessionStorage.getItem("userToken");
+
+        if(!userToken) {
+            event.preventDefault();
+            event.stopPropagation();
+            openLoginForm();
+        }*/
+    }
+
+    function requiredAuth(actionIfAuthorized) {
+        fetch('../controllers/studentController.php?action=sessionCheck')
+            .then(res => res.json())
+            .then(data => {
+                if(!data.success) {
+                    openLoginForm();
+                } else {
+                    actionIfAuthorized();
+                }
+            })
+            .catch(error => {
+                console.log("Error: ",error);
+                alert("Error on the server");
+            });
+        /*let userToken = sessionStorage.getItem("userToken");
+        if(!userToken) {
+            openLoginForm();
+        } else {
+            actionIfAuthorized();
+        }*/
+    }
+
+    // делегування події
+    document.addEventListener("click", function (event) {
+        const target = event.target;
+
+        if(target.closest("#loginButton")) return;
+        if (target.closest("form")) return;
+
+
+        if ((target.closest("button") || target.closest("a")) && !target.closest("#addButton")) {
+            checkAuthorization(event);
+        }
+    });
+
+    //відображення кнопки
+    /*const userToken = sessionStorage.getItem("userToken");
+    if (!userToken) {
+        const loginButton = document.getElementById("loginButton");
+
+        if (loginButton) loginButton.style.display = "block";
+    }*/
+    fetch('../controllers/studentController.php?action=session')
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                document.getElementById("profileName").textContent =
+                    data.loginName + " " + data.loginSurname;
+                document.getElementById("loginButton").style.display = "none";
+            } else {
+                const loginButton = document.getElementById("loginButton");
+                if (loginButton) loginButton.style.display = "block";
+            }
+        })
+        .catch(error => {
+            console.log("Error: ",error);
+            alert("Error on the server");
+        });
+
+
+    // відправка даних форми на контролер
+    document.getElementById("loginForm").addEventListener("submit", function (event) {
+        console.log("Submit dont work");
+        event.preventDefault();
+        event.stopPropagation();
+
+        const loginNameInput = document.getElementById("loginName");
+        const loginSurnameInput = document.getElementById("loginSurname");
+        const loginBirthday = document.getElementById("loginBirthday").value
+
+        const firstnamePattern = /^[A-Z][a-z]{0,18}(-[A-Z][a-z]*)?$/;
+        const lastnamePattern = /^[A-Z][a-z]{1,19}$/;
+
+        loginNameInput.addEventListener('input', (e) => validateNameField(e, firstnamePattern));
+        loginSurnameInput.addEventListener('input', (e) => validateNameField(e, lastnamePattern));
+
+        const requestData = {
+            loginName: loginNameInput.value,
+            loginSurname: loginSurnameInput.value,
+            loginBirthday: loginBirthday
+        };
+
+        console.log("Submit working");
+
+        fetch('../controllers/studentController.php?action=login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Server response:", data);
+            if (data.success) {
+                closeLoginForm();
+                alert("Successfully logged in!");
+                document.getElementById("loginButton").style.display = "none";
+                document.getElementById("profileName").textContent = requestData["loginName"] + " " + requestData["loginSurname"];
+            } else {
+                const message = data.message || "Failed to log in!";
+                alert(message);
+            }
+        })
+        .catch(error => {
+            console.log("Error: ",error);
+            alert("Error on the server");
+        });
+    });
+
+    // розлогінитися Log Out
+    /*document.getElementById("logOutButton").addEventListener("click", function () {
+        sessionStorage.removeItem("userToken");
+        window.location.href = "student.html";
+    })*/
+
+
 });
+
+
+
 
 function updateUserStatus() {
     const profileName = document.getElementById("profileName").textContent.trim();
@@ -512,7 +698,6 @@ function updateUserStatus() {
         }
     });
 }
-
 document.addEventListener("DOMContentLoaded", updateUserStatus);
 
 
