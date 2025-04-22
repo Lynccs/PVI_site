@@ -29,4 +29,25 @@ class authModel
             return false;
         }
     }
+
+    public function updateStudentOnlineStatusByPersonalData($firstName, $lastName, $birthday, $isOnline) {
+        try {
+            $sql = "UPDATE students_info 
+                SET is_online = :is_online, last_active = NOW() 
+                WHERE first_name = :first_name 
+                  AND last_name = :last_name 
+                  AND birthday = :birth_date";
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([
+                ':first_name' => $firstName,
+                ':last_name' => $lastName,
+                ':birth_date' => $birthday,
+                ':is_online' => $isOnline
+            ]);
+        } catch (PDOException $e) {
+            error_log("updateStudentOnlineStatusByPersonalData error: " . $e->getMessage());
+        }
+    }
+
 }

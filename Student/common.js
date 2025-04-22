@@ -1,5 +1,5 @@
 function isUserAuthorized() {
-    return fetch('../controllers/studentController.php?action=sessionCheck')
+    return fetch('../controllers/authController.php?action=sessionCheck')
         .then(res => res.json())  // Отримуємо JSON від сервера
         .then(data => {
             return data.success;  // Якщо сервер підтверджує авторизацію
@@ -11,15 +11,16 @@ function isUserAuthorized() {
 }
 
 
-function toggleActiveClass(element, event, addClassName) {
+async function toggleActiveClass(element, event, addClassName) {
         const targetElement = document.querySelector(element);
 
         if (!targetElement) return;
 
-        if (!isUserAuthorized()) {
-            //event.preventDefault();  // Перериваємо подію, якщо користувач не авторизований
-            return;
-        }
+        const authorized = await isUserAuthorized();
+         if (!authorized) {
+             return;
+         }
+
 
     const isActive = targetElement.classList.contains(addClassName);
 
@@ -39,9 +40,9 @@ function toggleActiveClass(element, event, addClassName) {
 }
 
 // Обробник кліків для закриття/відкриття вікон профілю та сповіщень
-document.addEventListener("click", function (event) {
-    toggleActiveClass(".profileWindow", event, "active");
-    toggleActiveClass(".notificationWindow", event, "active");
+document.addEventListener("click", async function (event) {
+    await toggleActiveClass(".profileWindow", event, "active");
+    await toggleActiveClass(".notificationWindow", event, "active");
 })
 
 
@@ -49,9 +50,9 @@ const notificationIcon = document.querySelector(".bi-bell");
 const notificationDot = document.querySelector(".notificationDot");
 const notificationMessage = document.querySelector(".notificationMessage");
 
-function animationMessage() {
-    if (!isUserAuthorized()) {
-        //event.preventDefault();  // Перериваємо подію, якщо користувач не авторизований
+async function animationMessage() {
+    const authorized = await isUserAuthorized();
+    if (!authorized) {
         return;
     }
 
@@ -90,7 +91,7 @@ document.addEventListener("click", function (event) {
 document.addEventListener("DOMContentLoaded", function () {
     const profileName = document.getElementById("profileName");
 
-    fetch('../controllers/studentController.php?action=sessionCheck')
+    fetch('../controllers/authController.php?action=sessionCheck')
         .then(res => res.json())
         .then(data => {
             if(data.success) {
@@ -112,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.getElementById("logOutButton").addEventListener("click", function () {
-    fetch('../controllers/studentController.php?action=logout')
+    fetch('../controllers/authController.php?action=logout')
         .then(res => res.json())
         .then(data => {
             if(data.success) {

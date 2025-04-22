@@ -222,22 +222,94 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            editRow(editingRow, group, firstName, lastName, gender, formattedBirthday);
+            fetch("../controllers/studentController.php?action=editStudent", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id: formUserID,
+                    group_name: group,
+                    first_name: firstName,
+                    last_name: lastName,
+                    gender: gender,
+                    birthday: birthday
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log(data.student);
+                        const student = data.student;
+                        const parts = student.birthday.split('-');
+                        const formattedDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
 
-            // Скидаємо стан після редагування
-            isEditing = false;
-            editingRow = null;
-            createButton.innerText = "Create";
+                        editRow(editingRow, student.group_name, student.first_name, student.last_name, student.gender, formattedDate);
 
-            // Закриваємо модальне вікно
-            document.querySelector(".modalTitle").innerHTML = "Add student";
-            closeModal();
+                        // Скидаємо стан після редагування
+                        isEditing = false;
+                        editingRow = null;
+                        createButton.innerText = "Create";
+
+                        // Закриваємо модальне вікно
+                        document.querySelector(".modalTitle").innerHTML = "Add student";
+                        closeModal();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
 
         } else {
-            const userID = crypto.randomUUID();
-            addRowToTable(group, firstName, lastName, gender, formattedBirthday, userID);
+            fetch('../controllers/studentController.php?action=addStudent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    group_name: group,
+                    first_name: firstName,
+                    last_name: lastName,
+                    gender: gender,
+                    birthday: formattedBirthday,
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.students) {
+                            allRows.length = 0;
+                            tableBody.innerHTML = '';
+                            data.students.forEach(student => {
+                                const parts = student.birthday.split('-');
+                                const formattedDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
 
-           closeModal()
+                                addRowToTable(
+                                    student.group_name,
+                                    student.first_name,
+                                    student.last_name,
+                                    student.gender,
+                                    formattedDate,
+                                    student.id
+                                );
+                            });
+                            alert("Successfully add student!");
+                        }
+                    } else {
+                        const message = data.message || "Failed add student!";
+                        alert(message);
+                    }
+                })
+                .catch(error => {
+                    console.log("Error: ", error);
+                    alert("Error on the server");
+                });
+            //const userID = crypto.randomUUID();
+            //addRowToTable(group, firstName, lastName, gender, formattedBirthday, userID);
+
+            closeModal()
         }
     });
 
@@ -258,8 +330,10 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("Натиснуто кнопку редагування");
 
             isEditing = true;
-            const userID = editBtn.closest("tr").dataset.userId; // Отримуємо ID з атрибута dataset
+            const userID = editBtn.closest("tr").dataset.userId; // Отримуємо ID з атрибута dataset\
+            console.log(userID);
             editingRow = tableBody.querySelector(`tr[data-user-id="${userID}"]`); // Шукаємо рядок по ID
+            console.log(editingRow);
 
             /*editingRow = editBtn.closest("tr"); */// Зберігаємо рядок для редагування
 
@@ -324,8 +398,28 @@ document.addEventListener("DOMContentLoaded", function () {
             closeDelete.replaceWith(closeDelete.cloneNode(true));
 
             document.querySelector(".confirmDelete").addEventListener("click", function () {
-                deleteRow(rowsToDelete);
-                closeDeleteWindow();
+                const idsToDelete = rowsToDelete.map(row => Number(row.dataset.userId));
+                fetch('../controllers/studentController.php?action=deleteStudent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ids : idsToDelete})
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            deleteRow(rowsToDelete);
+                            closeDeleteWindow();
+                        } else {
+                            const message = data.message || "Failed delete student!";
+                            alert(message);
+                        }
+                    })
+                    .catch(error => {
+                        console.log("Error: ", error);
+                        alert("Error on the server");
+                    });
             });
             document.querySelector(".cancelDelete").addEventListener("click", closeDeleteWindow);
             document.querySelector(".closeDelete").addEventListener("click", closeDeleteWindow);
@@ -516,7 +610,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Click event on", event.target);
     });
 
-    document.querySelector(".cancelLogIn").addEventListener("click", function(event) {
+    document.querySelector(".cancelLogIn").addEventListener("click", function() {
         console.log("Cancel button clicked");
         //event.stopPropagation();  // Зупиняємо поширення події
         closeLoginForm();
@@ -527,39 +621,31 @@ document.addEventListener("DOMContentLoaded", function () {
         closeLoginForm();
     });
 
-    document.getElementById("loginButton").addEventListener("click", function (event) {
+    document.getElementById("loginButton").addEventListener("click", function () {
         console.log("клік Log in");
         //event.stopPropagation(); // не передаємо делегуванню
         openLoginForm();
     })
 
-    function checkAuthorization(event) {
-        /*event.preventDefault();
-        event.stopPropagation();*/
-        fetch('../controllers/studentController.php?action=sessionCheck')
-            .then(res => res.json())
-            .then(data => {
-                if(!data.success) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    openLoginForm();
-                }
-            })
-            .catch(error => {
-                console.log("Error: ",error);
-                alert("Error on the server");
-            });
-        /*let userToken = sessionStorage.getItem("userToken");
+    /*async function checkAuthorization(event) {
+        try {
+            const res = await fetch('../controllers/authController.php?action=sessionCheck');
+            const data = await res.json();
 
-        if(!userToken) {
-            event.preventDefault();
-            event.stopPropagation();
-            openLoginForm();
-        }*/
-    }
+            if (!data.success) {
+                /!*event.preventDefault();
+                event.stopPropagation();*!/
+                openLoginForm();
+            }
+        } catch (error) {
+            console.log("Error: ", error);
+            alert("Error on the server");
+        }
+    }*/
+
 
     function requiredAuth(actionIfAuthorized) {
-        fetch('../controllers/studentController.php?action=sessionCheck')
+        fetch('../controllers/authController.php?action=sessionCheck')
             .then(res => res.json())
             .then(data => {
                 if(!data.success) {
@@ -572,16 +658,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log("Error: ",error);
                 alert("Error on the server");
             });
-        /*let userToken = sessionStorage.getItem("userToken");
-        if(!userToken) {
-            openLoginForm();
-        } else {
-            actionIfAuthorized();
-        }*/
     }
 
     // делегування події
-    document.addEventListener("click", function (event) {
+    document.addEventListener("click", async function (event) {
         const target = event.target;
 
         if(target.closest("#loginButton")) return;
@@ -589,18 +669,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         if ((target.closest("button") || target.closest("a")) && !target.closest("#addButton")) {
-            checkAuthorization(event);
+            /*event.preventDefault();
+            event.stopPropagation();
+            await checkAuthorization(event);*/
+            event.preventDefault();
+            event.stopPropagation();
+
+            try {
+                // Перевірка на авторизацію
+                const res = await fetch('../controllers/authController.php?action=sessionCheck');
+                const data = await res.json();
+
+                if (!data.success) {
+                    openLoginForm();
+                } else {
+                    // Якщо авторизовано, дозволяємо перехід на сторінку
+                    // Перевіряємо, чи є href у елемента
+                    const link = target.closest("a");
+                    if (link) {
+                        window.location.href = link.href;  // Переходимо на лінк
+                    }
+                }
+            } catch (error) {
+                console.log("Error: ", error);
+                alert("Error on the server");
+            }
         }
     });
 
     //відображення кнопки
-    /*const userToken = sessionStorage.getItem("userToken");
-    if (!userToken) {
-        const loginButton = document.getElementById("loginButton");
-
-        if (loginButton) loginButton.style.display = "block";
-    }*/
-    fetch('../controllers/studentController.php?action=session')
+    fetch('../controllers/authController.php?action=session')
         .then(res => res.json())
         .then(data => {
             if(data.success) {
@@ -616,6 +714,43 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("Error: ",error);
             alert("Error on the server");
         });
+
+    //відображення студентів в таблиці
+    function displayStudent() {
+        fetch('../controllers/studentController.php?action=getAllStudent')
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    allRows.length = 0;
+                    tableBody.innerHTML = '';
+                    data.students.forEach(student => {
+                        const parts = student.birthday.split('-');
+                        const formattedDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
+
+                        addRowToTable(
+                            student.group_name,
+                            student.first_name,
+                            student.last_name,
+                            student.gender,
+                            formattedDate,
+                            student.id
+                        );
+                    });
+                    renderTablePage(currentPage);
+                    renderPaginationButton();
+                } else {
+                    alert("Не вдалося завантажити студентів");
+                }
+            })
+            .catch(error => {
+                console.log("Error: ",error);
+                alert("Error on the server");
+            });
+    }
+
+    requiredAuth(() => {
+        displayStudent();
+    });
 
 
     // відправка даних форми на контролер
@@ -642,7 +777,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         console.log("Submit working");
 
-        fetch('../controllers/studentController.php?action=login', {
+        fetch('../controllers/authController.php?action=login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -657,6 +792,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert("Successfully logged in!");
                 document.getElementById("loginButton").style.display = "none";
                 document.getElementById("profileName").textContent = requestData["loginName"] + " " + requestData["loginSurname"];
+
+                displayStudent();
             } else {
                 const message = data.message || "Failed to log in!";
                 alert(message);
@@ -668,12 +805,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // розлогінитися Log Out
-    /*document.getElementById("logOutButton").addEventListener("click", function () {
-        sessionStorage.removeItem("userToken");
-        window.location.href = "student.html";
-    })*/
-
 
 });
 
@@ -681,24 +812,56 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 function updateUserStatus() {
-    const profileName = document.getElementById("profileName").textContent.trim();
-    const tableBody = document.getElementById("tableBody");
+    fetch('../controllers/studentController.php?action=getOnlineStudents')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const onlineStudents = data.students;
+                const tableBody = document.getElementById("tableBody");
 
-    tableBody.querySelectorAll("tr").forEach(row => {
-        const nameCell = row.querySelector("td:nth-child(3)");
-        const statusCell = row.querySelector(".status");
+                tableBody.querySelectorAll("tr").forEach(row => {
+                    const nameCell = row.querySelector("td:nth-child(3)");
+                    const statusCell = row.querySelector(".status");
 
-        if(nameCell && statusCell) {
-            statusCell.classList.remove("online", "offline");
-            if(nameCell.textContent.trim() === profileName) {
-                statusCell.classList.add("online");
+                    if (nameCell && statusCell) {
+                        statusCell.classList.remove("online", "offline");
+
+                        const studentIsOnline = onlineStudents.some(student =>
+                            student.first_name + " " + student.last_name === nameCell.textContent.trim()
+                        );
+
+                        if (studentIsOnline) {
+                            statusCell.classList.add("online");
+                        } else {
+                            statusCell.classList.add("offline");
+                        }
+                    }
+                });
             } else {
-                statusCell.classList.add("offline");
+                console.error("Не вдалося отримати список онлайн студентів.");
             }
-        }
-    });
+        })
+        .catch(error => console.error("Помилка при отриманні статусу студентів:", error));
 }
-document.addEventListener("DOMContentLoaded", updateUserStatus);
+
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM fully loaded");
+
+    setInterval(() => {
+        fetch('../controllers/authController.php?action=pingOnline')
+            .then(res => res.json())
+            .then(data => console.log("Ping status:", data));
+    }, 0.1 * 60 * 1000); // кожні 2 хвилини
+
+    updateUserStatus();
+
+    setInterval(() => {
+        console.log("updateUserStatus triggered");
+        updateUserStatus();
+    }, 0.1 * 60 * 1000);
+});
+
+
 
 
 
