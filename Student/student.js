@@ -689,6 +689,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (link) {
                         window.location.href = link.href;  // Переходимо на лінк
                     }
+                    onLoginSuccess(data.isAdmin);
                 }
             } catch (error) {
                 console.log("Error: ", error);
@@ -705,6 +706,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("profileName").textContent =
                     data.loginName + " " + data.loginSurname;
                 document.getElementById("loginButton").style.display = "none";
+
+                onLoginSuccess(data.isAdmin);
             } else {
                 const loginButton = document.getElementById("loginButton");
                 if (loginButton) loginButton.style.display = "block";
@@ -735,6 +738,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             formattedDate,
                             student.id
                         );
+                        onLoginSuccess(data.isAdmin);
                     });
                     renderTablePage(currentPage);
                     renderPaginationButton();
@@ -748,10 +752,22 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    requiredAuth(() => {
-        displayStudent();
-    });
+    requiredAuth(() => { displayStudent(); });
 
+    // оновлюємо таблицю кожні 2 хвилини
+    setInterval(() => {
+        requiredAuth(() => { displayStudent(); });
+    }, 0.5 * 60 * 1000);
+
+
+    function onLoginSuccess(isAdmin) {
+        if (!isAdmin) {
+            document.querySelectorAll("#addButton, .editBtn, .deleteBtn").forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add("disabled");
+            });
+        }
+    }
 
     // відправка даних форми на контролер
     document.getElementById("loginForm").addEventListener("submit", function (event) {
@@ -762,6 +778,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const loginNameInput = document.getElementById("loginName");
         const loginSurnameInput = document.getElementById("loginSurname");
         const loginBirthday = document.getElementById("loginBirthday").value
+        const isAdmin = document.getElementById("isAdmin").checked;
 
         const firstnamePattern = /^[A-Z][a-z]{0,18}(-[A-Z][a-z]*)?$/;
         const lastnamePattern = /^[A-Z][a-z]{1,19}$/;
@@ -772,7 +789,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const requestData = {
             loginName: loginNameInput.value,
             loginSurname: loginSurnameInput.value,
-            loginBirthday: loginBirthday
+            loginBirthday: loginBirthday,
+            isAdmin: isAdmin
         };
 
         console.log("Submit working");
@@ -792,6 +810,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert("Successfully logged in!");
                 document.getElementById("loginButton").style.display = "none";
                 document.getElementById("profileName").textContent = requestData["loginName"] + " " + requestData["loginSurname"];
+
+                onLoginSuccess(requestData.isAdmin);
 
                 displayStudent();
             } else {

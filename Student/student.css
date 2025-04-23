@@ -235,7 +235,7 @@ td {
     left: 50%;
     top: 45%;
     width: 30%;
-    height: 35%;
+    height: auto;
     transform: translate(-50%, -50%);
     z-index: 1000;
 }
@@ -279,6 +279,21 @@ td {
     border-radius: 5px;
 }
 
+#loginForm input[type="checkbox"] {
+    transform: scale(1);
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-left: 6px;
+}
+#adminCheckbox {
+    margin-top: 3vh;
+}
+button.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+    cursor: not-allowed;
+}
 
 .buttonContainer, .buttonContainerLogin {
     display: flex;

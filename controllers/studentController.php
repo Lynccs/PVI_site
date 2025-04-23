@@ -67,7 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['action']) && $_GET['act
         if($students){
             echo json_encode([
                 'success' => true,
-                'students' => $students
+                'students' => $students,
+                'isAdmin' => $_SESSION['isAdmin'] ?? false
             ]);
         }
     }
@@ -79,7 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['action']) && $_GET['act
 
     echo json_encode([
         'success' => true,
-        'students' => $students
+        'students' => $students,
+        'isAdmin' => $_SESSION['isAdmin'] ?? false
     ]);
     exit;
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['action']) && $_GET['action'] == 'editStudent'){

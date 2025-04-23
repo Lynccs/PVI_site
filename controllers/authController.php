@@ -6,10 +6,11 @@ require_once __DIR__ . '/../model/authModel.php';
     $jsonData = file_get_contents('php://input'); // читаємо тіло запиту
     $data = json_decode($jsonData, true); // Перетворюємо JSON у асоціативний масив
 
-     if(isset($data['loginName'], $data['loginSurname'], $data['loginBirthday'])) {
+     if(isset($data['loginName'], $data['loginSurname'], $data['loginBirthday'], $data['isAdmin'])) {
          $loginName = $data['loginName'];
          $loginSurname = $data['loginSurname'];
          $loginBirthday = $data['loginBirthday'];
+         $isAdmin = $data['isAdmin'];
 
          $namePattern = '/^[A-Z][a-z]{0,18}(-[A-Z][a-z]*)?$/';
          $surnamePattern = '/^[A-Z][a-z]{1,19}$/';
@@ -31,7 +32,7 @@ require_once __DIR__ . '/../model/authModel.php';
          }
 
          $model = new authModel();
-         $studentLogin = $model->checkLogin($loginName, $loginSurname, $loginBirthday);
+         $studentLogin = $model->checkLogin($loginName, $loginSurname, $loginBirthday, $isAdmin);
 
          if($studentLogin){
              try {
@@ -39,6 +40,7 @@ require_once __DIR__ . '/../model/authModel.php';
                  $_SESSION['loginName'] = $loginName;
                  $_SESSION['loginSurname'] = $loginSurname;
                  $_SESSION['loginBirthday'] = $loginBirthday;
+                 $_SESSION['isAdmin'] = $isAdmin;
 
                  error_log("Login info: name=$loginName, surname=$loginSurname, birthday=$loginBirthday");
 
@@ -76,11 +78,12 @@ require_once __DIR__ . '/../model/authModel.php';
 } else if($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['action']) && $_GET['action'] == 'session'){
      session_start();
 
-     if(isset($_SESSION['loginName'], $_SESSION['loginSurname'])) {
+     if(isset($_SESSION['loginName'], $_SESSION['loginSurname'], $_SESSION['isAdmin'])) {
          echo json_encode([
              'success' => true,
              'loginName' => $_SESSION['loginName'],
-             'loginSurname' => $_SESSION['loginSurname']
+             'loginSurname' => $_SESSION['loginSurname'],
+             'isAdmin' => $_SESSION['isAdmin']
          ]);
      } else {
          echo json_encode([
@@ -90,11 +93,12 @@ require_once __DIR__ . '/../model/authModel.php';
  } else if($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['action']) && $_GET['action'] == 'sessionCheck'){
      session_start();
 
-     if(isset($_SESSION['loginName'], $_SESSION['loginSurname'], $_SESSION['token'])) {
+     if(isset($_SESSION['loginName'], $_SESSION['loginSurname'], $_SESSION['token'], $_SESSION['isAdmin'])) {
          echo json_encode([
              'success' => true,
              'loginName' => $_SESSION['loginName'],
-             'loginSurname' => $_SESSION['loginSurname']
+             'loginSurname' => $_SESSION['loginSurname'],
+             'isAdmin' => $_SESSION['isAdmin']
          ]);
      } else {
          echo json_encode([

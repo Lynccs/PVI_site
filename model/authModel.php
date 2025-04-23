@@ -8,9 +8,11 @@ class authModel
     {
         $this->pdo = getAuthPDO();
     }
-    public function checkLogin($first_name, $last_name, $birthday): bool
+    public function checkLogin($first_name, $last_name, $birthday, $isAdmin): bool
     {
-        $sql = "SELECT * FROM students WHERE first_name = :first_name AND last_name = :last_name AND birthday = :birthday LIMIT 1";
+        $table = $isAdmin ? 'students' : 'students_info';
+
+        $sql = "SELECT * FROM $table WHERE first_name = :first_name AND last_name = :last_name AND birthday = :birthday LIMIT 1";
 
         // Підготовка запиту
         $stmt = $this->pdo->prepare($sql);

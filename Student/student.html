@@ -85,7 +85,12 @@
                  <input type="text" name="loginSurname" id="loginSurname" required>
                  <label for="loginBirthday">Birthday</label>
                  <input type="date" name="loginBirthday" id="loginBirthday" required min="1900-01-01" max="2025-12-31">
-                 <hr>
+                 <label id="adminCheckbox">
+                     Admin
+                     <input type="checkbox" id="isAdmin">
+                 </label>
+
+                 <!--<hr>-->
                  <div class="buttonContainerLogin">
                      <button type="button" class="cancelLogIn">Cancel</button>
                      <button type="submit" class="confirmLogIn">Log in</button>
