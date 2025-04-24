@@ -98,9 +98,9 @@ document.addEventListener("DOMContentLoaded", function () {
         newRow.appendChild(td7);
         newRow.appendChild(td8);
 
-        //tableBody.appendChild(newRow);
+        tableBody.appendChild(newRow);
         allRows.push(newRow);
-        renderTablePage(currentPage);
+        //renderTablePage(currentPage);
 
         const studentDate = {
             group: group,
@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         updateButtonsState();
         renderTablePage(currentPage);
-        renderPaginationButton();
+        //renderPaginationButton();
     }
 
     function closeDeleteWindow() {
@@ -279,24 +279,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        if (data.students) {
-                            allRows.length = 0;
-                            tableBody.innerHTML = '';
-                            data.students.forEach(student => {
-                                const parts = student.birthday.split('-');
-                                const formattedDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
 
-                                addRowToTable(
-                                    student.group_name,
-                                    student.first_name,
-                                    student.last_name,
-                                    student.gender,
-                                    formattedDate,
-                                    student.id
-                                );
-                            });
-                            alert("Successfully add student!");
-                        }
+                        alert("Successfully added student!");
+                        renderTablePage(currentPage);
+
                     } else {
                         const message = data.message || "Failed add student!";
                         alert(message);
@@ -536,45 +522,84 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // відображення сторінок таблиці
-    function renderTablePage(page){
-        tableBody.innerHTML = "";
-
-        const startIndex = (page - 1) * rowsPerPage;
-        const endIndex = startIndex + rowsPerPage;
-
-        const rowsToDisplay = allRows.slice(startIndex, endIndex);
-        rowsToDisplay.forEach(row => tableBody.appendChild(row));
-
+    function renderTablePage(page) {
         currentPage = page;
 
-        renderPaginationButton();
-        updateUserStatus();
-        updateButtonsState();
+        fetch('../controllers/studentController.php?action=getPaginationStudent', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                limit: rowsPerPage,
+                offset: (rowsPerPage * (page - 1))
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    allRows.length = 0;
+                    tableBody.innerHTML = '';
+                    data.students.forEach(student => {
+                        const parts = student.birthday.split('-');
+                        const formattedDate = `${parts[2]}.${parts[1]}.${parts[0]}`;
+
+                        addRowToTable(
+                            student.group_name,
+                            student.first_name,
+                            student.last_name,
+                            student.gender,
+                            formattedDate,
+                            student.id
+                        );
+                    });
+                    onLoginSuccess(data.isAdmin);
+                    renderPaginationButton();
+                    updateUserStatus();
+                    updateButtonsState();
+                }
+            })
+            .catch(error => {
+                console.log("Error: ", error);
+                alert("Error loading students");
+            });
     }
 
     // відображення кнопок пагінації
-    function renderPaginationButton(){
+    function renderPaginationButton() {
+        console.log('Rendering pagination buttons...');
         const pageNumber = document.getElementById("pageNumbers");
         pageNumber.innerText = "";
 
-        const totalPages = Math.ceil(allRows.length / rowsPerPage);
-        for(let i = 1; i <= totalPages; i++) {
-            const pageButton = document.createElement("button");
-            pageButton.textContent = i;
+        fetch('../controllers/studentController.php?action=getTotalStudentsCount')
+            .then(response => response.json())
+            .then(data => {
+                const totalRows = data.total;
+                const totalPages = Math.ceil(totalRows / rowsPerPage);
 
-            if (i === currentPage) {
-                pageButton.classList.add("active");
-            }
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageButton = document.createElement("button");
+                    pageButton.textContent = i;
 
-            pageButton.addEventListener("click", () => {
-                renderTablePage(i);
+                    if (i === currentPage) {
+                        pageButton.classList.add("active");
+                    }
+
+                    pageButton.addEventListener("click", () => {
+                        renderTablePage(i);
+                    });
+
+                    pageNumber.appendChild(pageButton);
+                }
+
+                document.getElementById("prevPage").disabled = currentPage === 1;
+                document.getElementById("nextPage").disabled = currentPage === totalPages;
+            })
+            .catch(error => {
+                console.error('Error:', error);
             });
-
-            pageNumber.appendChild(pageButton);
-        }
-        document.getElementById("prevPage").disabled = currentPage === 1;
-        document.getElementById("nextPage").disabled = currentPage === totalPages;
     }
+
 
     document.getElementById("prevPage").addEventListener("click", () => {
         if (currentPage > 1) {
@@ -583,10 +608,18 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     document.getElementById("nextPage").addEventListener("click", () => {
-        const totalPages = Math.ceil(allRows.length / rowsPerPage);
-        if (currentPage < totalPages) {
-            renderTablePage(currentPage + 1);
-        }
+        fetch('../controllers/studentController.php?action=getTotalStudentsCount')
+            .then(response => response.json())
+            .then(data => {
+                const totalRows = data.total;
+                const totalPages = Math.ceil(totalRows / rowsPerPage);
+                if (currentPage < totalPages) {
+                    renderTablePage(currentPage + 1);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     });
 
     // кнопка авторизації Log in
@@ -720,7 +753,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     //відображення студентів в таблиці
     function displayStudent() {
-        fetch('../controllers/studentController.php?action=getAllStudent')
+        fetch('../controllers/studentController.php?action=getPaginationStudent', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                limit: rowsPerPage,
+                offset: (rowsPerPage * (currentPage-1))
+            })
+        })
             .then(res => res.json())
             .then(data => {
                 if(data.success) {
@@ -741,7 +783,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         onLoginSuccess(data.isAdmin);
                     });
                     renderTablePage(currentPage);
-                    renderPaginationButton();
+                    //renderPaginationButton();
                 } else {
                     alert("Не вдалося завантажити студентів");
                 }
@@ -754,10 +796,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     requiredAuth(() => { displayStudent(); });
 
-    // оновлюємо таблицю кожні 2 хвилини
-    setInterval(() => {
+    /*setInterval(() => {
         requiredAuth(() => { displayStudent(); });
-    }, 0.5 * 60 * 1000);
+    }, 0.5 * 60 * 1000);*/
 
 
     function onLoginSuccess(isAdmin) {
@@ -826,13 +867,19 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
-});
-
-
 
 
 function updateUserStatus() {
-    fetch('../controllers/studentController.php?action=getOnlineStudents')
+    fetch('../controllers/studentController.php?action=getOnlineStudents', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            limit: rowsPerPage,
+            offset: (rowsPerPage * (currentPage-1))
+        })
+    })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -864,7 +911,6 @@ function updateUserStatus() {
         .catch(error => console.error("Помилка при отриманні статусу студентів:", error));
 }
 
-document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM fully loaded");
 
     setInterval(() => {
@@ -879,10 +925,8 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("updateUserStatus triggered");
         updateUserStatus();
     }, 0.1 * 60 * 1000);
+
 });
-
-
-
 
 
 

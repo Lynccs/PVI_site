@@ -13,10 +13,12 @@ class studentModel {
         $this->pdo = getAuthPDO();
     }
 
-    public function getAllStudent(): array {
+    public function getPaginationStudent($limit, $offset): array {
         try {
-            $sql = "SELECT * FROM students_info";
+            $sql = "SELECT * FROM students_info LIMIT :limit OFFSET :offset";
             $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -25,24 +27,32 @@ class studentModel {
         }
     }
 
+    public function getTotalStudentsCount() {
+        $sql = "SELECT COUNT(*) as total FROM students_info";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['total'];
+    }
+
 
     public function addStudentToTable(string $group, string $name, string $surname, string $gender,
-                                      string $birthday): array {
+                                      string $birthday): bool {
         try {
             $sql = "INSERT INTO students_info (group_name, first_name, last_name, gender, birthday) VALUES (:group_name, :first_name, :last_name, :gender, :birthday)";
             $stmt = $this->pdo->prepare($sql);
 
-            $stmt->execute([
+            $success = $stmt->execute([
                 ':group_name' => $group,
                 ':first_name' => $name,
                 ':last_name' => $surname,
                 ':gender' => $gender,
                 ':birthday' => $birthday
             ]);
-            return $this->getAllStudent();
+            return $success;
         } catch (PDOException $e) {
             error_log($e->getMessage());
-            return [];
+            return false;
         }
     }
 
@@ -107,15 +117,18 @@ class studentModel {
         return $stmt->fetchColumn() > 0;
     }
 
-    public function getOnlineStudents() {
+    public function getOnlineStudents($limit, $offset): array
+    {
         try {
             $sqlUpdate = "UPDATE students_info 
                       SET is_online = 0 
                       WHERE last_active < NOW() - INTERVAL 1 MINUTE";
             $this->pdo->exec($sqlUpdate);
 
-            $sql = "SELECT * FROM students_info WHERE is_online = 1 AND last_active >= NOW() - INTERVAL 1 MINUTE";
+            $sql = "SELECT * FROM students_info WHERE is_online = 1 AND last_active >= NOW() - INTERVAL 1 MINUTE LIMIT :limit OFFSET :offset";
             $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {

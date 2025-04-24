@@ -67,21 +67,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['action']) && $_GET['act
         if($students){
             echo json_encode([
                 'success' => true,
-                'students' => $students,
                 'isAdmin' => $_SESSION['isAdmin'] ?? false
             ]);
         }
     }
-} else if($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['action']) && $_GET['action'] == 'getAllStudent'){
+} else if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['action']) && $_GET['action'] == 'getPaginationStudent'){
+    session_start();
+
+    $jsonData = file_get_contents('php://input');
+    $data = json_decode($jsonData, true);
+
+    if(isset($data['limit'], $data['offset'])) {
+        $limit = $data['limit'];
+        $offset = $data['offset'];
+
+        $model = new studentModel();
+        $students = $model->getPaginationStudent($limit, $offset);
+
+        echo json_encode([
+            'success' => true,
+            'students' => $students,
+            'isAdmin' => $_SESSION['isAdmin'] ?? false
+        ]);
+    }
+    exit;
+} else if($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['action']) && $_GET['action'] == 'getTotalStudentsCount'){
     session_start();
 
     $model = new studentModel();
-    $students = $model->getAllStudent();
+    $total = $model->getTotalStudentsCount();
 
     echo json_encode([
         'success' => true,
-        'students' => $students,
-        'isAdmin' => $_SESSION['isAdmin'] ?? false
+        'total' => $total
     ]);
     exit;
 } else if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['action']) && $_GET['action'] == 'editStudent'){
@@ -170,17 +188,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['action']) && $_GET['act
     }
     echo json_encode(["success" => false]);
 
-    } else if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['action']) && $_GET['action'] == 'getOnlineStudents') {
-        session_start();
+} else if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_GET['action']) && $_GET['action'] == 'getOnlineStudents') {
+    session_start();
+
+    $jsonData = file_get_contents('php://input'); // читаємо тіло запиту
+    $data = json_decode($jsonData, true);
+
+    if(isset($data['limit'], $data['offset'])) {
+        $limit = $data['limit'];
+        $offset = $data['offset'];
 
         $model = new studentModel();
-        $onlineStudents = $model->getOnlineStudents();
+        $onlineStudents = $model->getOnlineStudents($limit, $offset);
 
         echo json_encode([
             'success' => true,
             'students' => $onlineStudents
         ]);
-        exit;
-
     }
+    exit;
+}
 
