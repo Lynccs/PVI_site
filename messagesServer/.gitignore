@@ -1,0 +1,16 @@
+node_modules/
+# Лог-файли
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Конфіденційні файли
+.env
+
+# Кеш
+.DS_Store
+*.log
+
+# Вихідні/згенеровані файли
+/dist
+/build

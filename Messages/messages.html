@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="messages.css">
+    <link rel="stylesheet" href="../Student/common.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+    <title>Messages</title>
+</head>
+
+<body>
+
+<header>
+    <div class="headerRight"><a href="../Student/student.html" id="logo">
+        <span>CMS</span>
+        <img src="../Icon/LogoNewRes.png" alt=""></a></div>
+
+    <div class="headerProfile">
+
+        <div class="notificationWindow">
+            <div class="notificationIconContainer">
+                <i class="bi bi-bell" title="Notification">
+                    <span class="notificationDot"></span>
+                    <span class="notificationMessage">New message</span>
+                </i>
+            </div>
+            <div class="notificationOptions">
+                <ul>
+                   <!-- <li><i class="bi bi-person-circle"></i>Saved</li>
+                    <li><i class="bi bi-person-circle"></i>Jin</li>
+                    <li><i class="bi bi-person-circle"></i>Hardy</li>-->
+                </ul>
+            </div>
+        </div>
+
+        <div class="profileWindow">
+            <div class="profileIconContainer">
+                <i class="bi bi-person-circle" title="Profile"></i>
+            </div>
+            <div class="profileOptions">
+                <div>Profile</div>
+                <div id="logOutButton">Log out</div>
+            </div>
+        </div>
+
+        <div id="profileName"></div>
+        <div class="login">
+            <button id="loginButton">Log in</button>
+        </div>
+
+
+    </div>
+</header>
+
+<div class="mainContainer">
+
+    <button class="menuButton" aria-label="Open menu">
+        <i class="bi bi-list"></i>
+    </button>
+
+    <aside>
+        <nav class="navigationAside">
+            <ul>
+                <li><a href="../Dashboard/dashboard.html">Dashboard</a></li>
+                <li><a href="../Student/student.html">Students</a></li>
+                <li><a href="../Tasks/tasks.html">Tasks</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main>
+        <h1>Messages</h1>
+
+        <div class="messageContainer">
+
+            <div class="chatList">
+                <div class="chatListHeader">
+                    <h3>Chats</h3>
+                    <button id="addChatButton">+ New chat</button>
+                </div>
+
+                <div class="chatListBody">
+                    <div class="chatListItem">
+                        <ul>
+                            <li><i class="bi bi-person-circle"></i>Saved</li>
+                            <li><i class="bi bi-person-circle"></i>SSSSSSSSS</li>
+                            <li><i class="bi bi-person-circle"></i>Hardy</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chatWindow">
+                <div class="chatWindowHeader">
+                    <h3>Viktor</h3>
+                    <button id="chatInfoButton" class="infoButton" title="Chat Info">
+                        <i class="bi bi-info-circle"></i>
+                    </button>
+                </div>
+
+                <div class="chatWindowMessages" id="chatWindowMessages">
+
+                </div>
+
+                <div class="chatWindowInput">
+                    <input type="text" id="chatMessageInput" placeholder="Type a message..." />
+                    <button id="sendMessagesButton">
+                        <i class="bi bi-send"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!--для затемнення заднього фону-->
+    <div id="overlay" class="overlay"></div>
+
+
+    <div id="chatInfoModal" class="chatInfoModal">
+        <div class="modalContentChatInfo">
+            <span class="closeModalChatInfo">&times;</span>
+            <h3 id="chatInfoName">My Group</h3>
+            <p id="chatInfoUserStyle"><span id="chatInfoUserCount">12</span> Users</p>
+            <div id="ChatInfoUserList" class="ChatInfoUserList">
+                <ul id="chatInfoUsers">
+                 <!-- Список користувачів буде динамічно доданий -->
+                    <li><i class="bi bi-person-circle"></i>Saved</li>
+                    <li><i class="bi bi-person-circle"></i>Saved</li>
+                    <li><i class="bi bi-person-circle"></i>Saved</li>
+                 </ul>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div id="addChatWindow" class="modalAddChatWindow">
+        <div class="modalContent">
+            <span class="closeAddChat">&times;</span>
+            <h2>Add chat</h2>
+
+            <div class = "addMemberButton">
+                <button type="button" class="addUserToGroup">Add member</button>
+            </div>
+
+            <form id ="addChatForm">
+
+                <label for="chatName" id="chatNameLabel">Chat name</label>
+                <input type="text" name="chatName" id="chatName">
+
+                <label id="memberLabel">Members</label>
+                <div id="memberList" class="memberList">
+                    <!--<p class="placeholder">No members added</p>-->
+                    <ul>
+                        <li>
+                            Viktor Hvozdyk/15.11.2006
+                            <button class="deleteButton" type="button"><i class="bi bi-trash"></i></button>
+                        </li>
+                        <li>Viktor Hvozdyk/15.11.2006</li>
+                    </ul>
+                </div>
+
+                <label for="chatUserName">Username</label>
+                <input type="text" name="chatUserName" id="chatUserName" required>
+                <label for="chatUserSurname">Surname</label>
+                <input type="text" name="chatUserSurname" id="chatUserSurname" required>
+                <label for="chatBirthday">Birthday</label>
+                <input type="date" name="chatBirthday" id="chatBirthday" required min="1900-01-01" max="2025-12-31">
+
+
+                <label id="chatGroupCheckbox">
+                    Group Chat
+                    <input type="checkbox" id="isGroup">
+                </label>
+
+                <!--<hr>-->
+                <div class="buttonContainerAddChat">
+                    <button type="button" class="cancelAddChat">Cancel</button>
+                    <button type="submit" class="confirmAddChat">Add new chat</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+
+
+<script src="messages.js"></script>
+<script src="../Student/common.js"></script>
+
+
+</body>
+</html>
+

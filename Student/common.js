@@ -27,6 +27,7 @@ async function toggleActiveClass(element, event, addClassName) {
     // шукає елемент, який або сам є тим, що відповідає селектору (наприклад, класу)
     // або є одним із його батьків
     if (event.target.closest(element)) {
+
         targetElement.classList.toggle(addClassName);
 
         // Якщо вікно відкривається, ховаємо notificationDot

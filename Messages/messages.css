@@ -1,0 +1,408 @@
+.messageContainer {
+    display: flex;
+    flex: 1;
+    width: 90%;
+    height: 100%;
+    margin: 0 auto;
+    background-color: red;
+    box-shadow: -2px 2px 15px 1px #b8b8b8;
+    border-radius: 5px;
+}
+
+.chatList {
+    width: 30%;
+    background-color: #ccc;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #b8b8b8;
+}
+.chatListHeader {
+    display: flex;
+    flex-direction: row;
+    padding: 0 20px;
+    justify-content: space-between;
+    align-items: center;
+}
+#addChatButton {
+    padding: 10px 20px;
+    width: auto;
+    font-size: 0.8rem;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    cursor: pointer; /* Курсор у вигляді руки */
+    transition: background-color 0.3s, transform 0.2s;
+    background-color: #5B77A1;
+}
+#addChatButton:hover {
+    background-color: #8CB3D9;
+    transform: scale(1.1);
+}
+#addChatButton:active {
+    background-color: #3F5A80;
+    transform: scale(0.98);
+}
+
+.chatListBody {
+    background-color: #F2EFE7;
+    flex: 1;
+}
+
+
+.ChatInfoUserList {
+    border: 1px solid black;
+    max-height: 150px;
+    overflow-y: auto;
+    padding: 8px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+}
+
+.chatListItem ul {
+    list-style: none;
+    margin: 0;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.ChatInfoUserList ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.chatListItem li {
+    display: flex;
+    padding: 15px;
+    align-items: center;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #d0d0d0;
+    color: #465A7C;
+}
+.ChatInfoUserList li {
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #d0d0d0;
+    color: #465A7C;
+}
+
+.chatListItem li:hover {
+    background-color: #5B77A1;
+    color: #fff;
+}
+/*///////////////////*/
+
+.chatWindow {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background-color: #fff;
+    border-bottom: 2px solid #b8b8b8;
+    border-right: 2px solid #b8b8b8;
+    border-top: 2px solid #b8b8b8;
+}
+.chatWindowHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    padding: 0 20px;
+    background-color: #5b77a1;
+    color: white;
+}
+.infoButton {
+    background: none;
+    border: none;
+    color: #FFFFFF;
+    font-size: 1.4rem;
+    cursor: pointer;
+}
+
+.infoButton:hover {
+    color: #000;
+}
+
+.chatInfoModal {
+    display: none;
+    position: fixed;
+    left: 61%;
+    top: 45%;
+    width: 35%;
+    height: auto;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
+.modalContentChatInfo {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    border-radius: 8px;
+}
+
+.closeModalChatInfo {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.closeModalChatInfo:hover {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+#chatInfoName {
+    margin-bottom: 0;
+}
+#chatInfoUserStyle {
+    margin-top: 0;
+}
+/*//////////////////*/
+
+.chatWindowMessages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #f8f8f8;
+}
+
+.chatWindowInput {
+    display: flex;
+    padding: 10px;
+    gap: 10px;
+    border-top: 1px solid #ccc;
+}
+
+.chatWindowInput input {
+    flex: 1;
+    padding: 8px;
+    font-size: 16px;
+}
+
+.chatWindowInput button {
+    padding: 8px 16px;
+    font-size: 16px;
+    background-color: #a39072;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+/*///////////////////////*/
+
+
+.modalAddChatWindow {
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 45%;
+    width: 30%;
+    height: auto;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
+.modalContent {
+    background-color: #F2EFE7;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    text-align: left;
+    border: 2px solid #5B77A1;
+    width: 100%;
+    height: 100%;
+}
+.modalContent .closeAddChat {
+    position: absolute;  /* Хрестик позиціонується абсолютно відносно modalContent */
+    top: 10px;           /* Відстань від верхнього краю */
+    right: 20px;         /* Відстань від правого краю */
+    font-size: 30px;     /* Збільшуємо розмір шрифту для хрестика */
+    color: #5B77A1;      /* Колір хрестика */
+    cursor: pointer;     /* Курсор у вигляді руки */
+}
+
+#addChatForm {
+    display: grid;
+    /*background-color: red;*/
+    grid-template-columns: 1fr 2fr; /*33% 67%*/
+    gap: 8px;
+    align-items: center;
+}
+
+#addChatForm label {
+    text-align: left;
+}
+
+#addChatForm input, #addChatForm select {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#addChatForm input[type="checkbox"] {
+    transform: scale(1);
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-left: 6px;
+}
+
+
+
+/*/////*/
+#chatGroupCheckbox {
+    margin-top: 3vh;
+}
+button.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+.buttonContainer, .buttonContainerAddChat {
+    display: flex;
+    justify-content: flex-end;  /* Вирівнює кнопки праворуч */
+    gap: 10px;  /* між кнопками */
+    margin-top: 20px;
+}
+
+.modalAddChatWindow button  {
+    background: none;
+    color: #5B77A1;
+    border: 2px solid #5B77A1;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+.modalAddChatWindow button:hover   {
+    background-color: #5B77A1;
+    color: #F2EFE7;
+}
+
+input:focus:invalid {
+    border: 2px solid red;
+    background-color: #ffe6e6;
+}
+
+@media screen and (max-width: 950px) {
+    .modalAddChatWindow {
+        width: 50%;  /* Зменшуємо ширину для планшетів */
+        height: auto;
+        top: 45%;  /* Розташовуємо трохи нижче */
+    }
+
+    .modalContent {
+        padding: 15px;
+    }
+
+}
+
+@media screen and (max-width: 480px) {
+    .modalAddChatWindow {
+        width: 90%;
+        height: auto;
+    }
+
+    .modalContent {
+        padding: 10px;
+    }
+
+    #addChatForm {
+        grid-template-columns: 1fr;
+    }
+
+    .buttonContainerAddChat {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+/*////////////////////////*/
+#addChatForm #chatNameLabel,
+#chatName,
+#memberLabel,
+#memberList {
+    display: none;
+}
+
+
+.addMemberButton {
+    display: none;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.memberList {
+    border: 1px solid black;
+    border-radius: 5px;
+    height: 70px;
+    overflow-x: auto;
+    overflow-y: auto;
+    padding: 3px;
+}
+.memberList ul {
+    list-style: none;
+    margin: 0;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.memberList li {
+    justify-content: space-between;
+    display: flex;
+    padding: 7px;
+    align-items: center;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #d0d0d0;
+    color: #000000
+}
+
+.modalAddChatWindow .deleteButton {
+    font-size: 14px;
+    cursor: pointer;
+    padding: 4px;
+    margin: 0 2px;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+    color: #C94C4C;
+    border: 2px solid #C94C4C;
+}
+.modalAddChatWindow .deleteButton:hover {
+    background-color: #C94C4C;
+    color: #FFFFFF;
+}
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Чорний фон з прозорістю */
+    z-index: 999; /* Щоб він був позаду модального вікна */
+}
+
+
+/*.placeholder {
+    color: #aaa;
+    font-style: italic;
+    text-align: center;
+}*/
